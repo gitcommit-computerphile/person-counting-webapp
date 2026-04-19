@@ -1,0 +1,22 @@
+services:
+  person-counter-api:
+    build: ./backend
+    container_name: person-counter-api
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 5000 --reload
+    restart: unless-stopped
+
+  streamlit-ui:
+    build: ./frontend
+    container_name: streamlit-ui
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./frontend:/app
+    command: streamlit run streamlit_app.py --server.address 0.0.0.0 --server.port 8501
+    depends_on:
+      - person-counter-api
+    restart: unless-stopped
